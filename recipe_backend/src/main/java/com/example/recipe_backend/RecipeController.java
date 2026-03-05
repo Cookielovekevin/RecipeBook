@@ -21,11 +21,19 @@ import java.io.*;
 public class RecipeController {
     private final String FILE_PATH = "recipes.json";
     private final ObjectMapper MAPPER = new ObjectMapper(); 
+
+    @GetMapping("/test")
+    public Recipe test() throws Exception{
+        Step s1 = new Step("Boil water", 10);
+        Step s2 = new Step("Add pasta", 8);
+        Instructions test = new Instructions(Arrays.asList(s1, s2));
+        return new Recipe("1", "Pasta", Arrays.asList("Water", "Pasta"), test);
+    }
     
-    @GetMapping
+    @GetMapping("/recipes")
     public List<Recipe> getRecipes() throws Exception{
         File file = new File(FILE_PATH);
-        if (!file.exists()) return new ArrayList<>();
+        if (!file.exists() || file.length() == 0) return new ArrayList<>();
         
         // Read the JSON file and turn it back into a Java List
         return MAPPER.readValue(file, new TypeReference<List<Recipe>>(){});

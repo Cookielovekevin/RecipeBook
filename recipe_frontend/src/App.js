@@ -1,23 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import RecipeForm from "./components/RecipeForm";
 
 function App() {
+  const [recipe, setRecipe] = useState(null);
+
+  const fetchRecipes = () => {
+    fetch('http://localhost:8080/test')
+      .then(response => response.json())
+      .then(data => setRecipe(data))
+      .catch(err => console.error("Kitchen is closed:", err));
+  }
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  if (!recipe) return <div>No reipces!</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: '20px' }}>
+      <RecipeForm onRecipeAdded = {fetchRecipes}></RecipeForm>
     </div>
   );
 }
