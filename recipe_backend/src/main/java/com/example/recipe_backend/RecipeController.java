@@ -1,13 +1,8 @@
 package com.example.recipe_backend;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,6 +29,27 @@ public class RecipeController {
         return recipeRepository.save(newRecipe);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRecipe(@PathVariable Long id){
+        if(recipeRepository.existsById(id)){
+            recipeRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Recipe> updateRecipe(@PathVariable Long id, @RequestBody Recipe updatedRecipe){
+        return recipeRepository.findById(id)
+            .map(recipe -> {
+                recipe.setTitle(updatedRecipe.getTitle());
+                recipe.setIngredients(updatedRecipe.getIngredients());
+                recipe.setInstructions(updatedRecipe.getInstructions());
+                Recipe saved = recipeRepository.save(recipe);
+                return ResponseEntity.ok(saved);
+            })
+            .orElse(ResponseEntity.notFound().build());
+    } 
 
     @GetMapping("/test")
     public Recipe test() throws Exception{
@@ -43,5 +59,6 @@ public class RecipeController {
         Recipe testRecipe = new Recipe("Pasta", Arrays.asList("Water", "Pasta"), test);
         return recipeRepository.save(testRecipe);
     }
+
 
 }

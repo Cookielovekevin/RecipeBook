@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import RecipeForm from "./components/RecipeForm";
 import RecipeCard from './components/RecipeCard';
+import EditingCard from './components/EditingCard';
 
 function App() {
   const [recipes, setRecipes] = useState(null);
+  const [editingId, setEditingId] = useState(null);
 
   const fetchRecipes = () => {
    fetch("http://localhost:8080/api/recipes")
@@ -27,7 +29,25 @@ function App() {
       <h2>Recipe Gallery</h2>
       <div style={containerStyle}>
         {recipes.map(recipe => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
+          // r we editing? 
+          editingId === recipe.id ? (
+            <EditingCard
+              key = {recipe.id}
+              recipe = {recipe}
+              onCancel = {() => setEditingId(null)}
+              onUpdate={() => {
+                fetchRecipes(); // refresh data
+                setEditingId(null);
+              }}
+            ></EditingCard>
+          ) : (
+            <RecipeCard
+              key = {recipe.id}
+              recipe = {recipe}
+              onDelete = {fetchRecipes}
+              onEdit = {() => setEditingId(recipe.id)}
+            ></RecipeCard>
+          )
         ))}
       </div>
     </div>

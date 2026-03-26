@@ -24,7 +24,7 @@ public class Recipe {
     public void setIngredients(List<String> ingredients) { this.ingredients = ingredients; }
     public Instructions getInstructions() { return instructions; }
     public void setInstructions(Instructions instructions) { this.instructions = instructions; }
-
+    public Long getId(){return id;}
     public Recipe(String title, List<String> ingredients, Instructions instructions) {
         this.title = title;
         this.ingredients = ingredients;
